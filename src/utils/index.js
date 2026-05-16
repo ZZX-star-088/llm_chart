@@ -1,5 +1,3 @@
-
-
 const userInput = ref(store.history[0]);
 const aiReply = ref('');
 
@@ -7,13 +5,11 @@ export async function sendMessage() {
     if (!userInput.value) return;
 
     try {
-        // 调用你自己的后端接口（地址和后端启动的一致）
         const res = await fetch('http://localhost:3001/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            // 把用户输入传给后端
             body: JSON.stringify({ userInput: userInput.value }),
         });
 

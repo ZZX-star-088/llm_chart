@@ -2,118 +2,119 @@
   <RecycleScroller
       class="scroller"
       :items="list"
-      :item-size="40"
+      :item-size="44"
       key-field="id"
-      v-slot="{ item ,index}"
-      style="height: 330px; width: 100%;"
-       :scroller-enabled="true"  
-       :buffer="0"   
-      >
-    <!-- 这里就是自己要渲染的每一项的内容-->
-    <div 
-    class="onemessage"
-    v-if="item.sender===1"
-    >
-        <div class="icon"> 
-            <el-icon><ChatDotSquare /></el-icon>
-        </div>
-        <div class="message">{{item.message.slice(0,10)}}</div>
-        <div class="delete">
-          <div class="icon_delete" title="删除" @click="deletemess(store.$state,index)">
-             <el-icon><CloseBold /></el-icon>
-          </div>
-           
-        </div>
+      v-slot="{ item, index }"
+      style="height: 100%; width: 100%;"
+      :buffer="20"
+  >
+    <div class="history-item" v-if="item.sender === 1">
+      <div class="history-icon">
+        <el-icon><ChatDotSquare /></el-icon>
+      </div>
+      <div class="history-text">{{ item.message.slice(0, 12) }}</div>
+      <div class="history-delete" title="删除" @click.stop="deletemess(store.$state, index)">
+        <el-icon><CloseBold /></el-icon>
+      </div>
     </div>
   </RecycleScroller>
 </template>
+
 <script setup>
 import { useStore } from '../store/store';
+
 const props = defineProps({
   list: {
     type: Array,
-    default: () => [] // 加默认空数组，避免未传值时为 undefined
+    default: () => []
   }
 })
-const store=useStore()
-//删除历史消息
-function deletemess(state,index){
-  console.log('state',state)
-  console.log('index',index)
-    store.deletemessage(state,index)
-    
+
+const store = useStore()
+
+function deletemess(state, index) {
+  store.deletemessage(state, index)
 }
 </script>
+
 <style lang="css" scoped>
 .scroller {
   height: 100%;
 }
-.user {
-  height: 32%;
-  padding: 0 12px;
+
+.history-item {
   display: flex;
   align-items: center;
-}
-.onemessage{
-    margin-top: 10px;
-    height: 30px;
-    width: 100%;
-    display: flex;
-    justify-content: start;
-    box-sizing: border-box;
-}
-.onemessage:hover{
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 0px solid rgba(72, 120, 226, 0.74);
-    border-radius: 20px;
-    cursor: pointer;
-}
-.message{
-    padding-left: 7px;
-    line-height: 30px;
-    font-size: 15px;
-    color: rgba(0, 0, 0, 0.8);
-}
-.icon{
-    height: 100%;
-    width: 30px;
-    display: flex;
-    justify-content:center;
-    align-items: center;
-}
-.icon :deep(.el-icon){
-    font-size: 18px;
-}
-.delete{
-    float: right;
-    height: 100%;
-    width: 20px;
-    flex: 1;
-    display: flex;
-    justify-content: end;
-    align-items: center;
-}
-.icon_delete{
-  height: 25px;
-  width: 25px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  gap: 8px;
+  padding: 8px 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 2px;
 }
-.delete :deep(.el-icon){
-    padding-right: 7px;
+
+.history-item:hover {
+  background: var(--primary-bg);
 }
+
+.history-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.history-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 28px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.history-delete {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 12px;
+  opacity: 0;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.history-item:hover .history-delete {
+  opacity: 1;
+}
+
+.history-delete:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
 :deep(.vue-recycle-scroller.ready.direction-vertical.scroller) {
-  overflow-y: auto !important; /* 保留滚动 */
+  overflow-y: auto !important;
   -ms-overflow-style: none !important;
-  scrollbar-width: none !important;
-  padding-right: 8px !important; /* 抵消原滚动条的宽度占位 */
+  scrollbar-width: thin !important;
+  padding-right: 4px !important;
 }
 
 :deep(.vue-recycle-scroller.ready.direction-vertical.scroller::-webkit-scrollbar) {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
+  width: 4px !important;
+}
+
+:deep(.vue-recycle-scroller.ready.direction-vertical.scroller::-webkit-scrollbar-thumb) {
+  background: rgba(0, 0, 0, 0.1) !important;
+  border-radius: 2px !important;
 }
 </style>

@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { watch } from 'vue'
 const STORE_KEY = 'history_chat'
 const STORE_AI = 'ai_response'
+const MAX_SIZE_LUR = 1000
 export const useStore = defineStore('chatHisory', {
     state: () => ({
         history: [],
@@ -40,8 +41,18 @@ export const useStore = defineStore('chatHisory', {
         },
         //添加消息
         addhistory: (state, messageItem) => {
-            const itemWithId = { ...messageItem, id: messageItem || Date.now() + Math.random().toString(36).slice(2) }
+            const itemWithId = { ...messageItem, id: messageItem.id || Date.now() + Math.random().toString(36).slice(2) }
+            //LUR缓存策略
+            const indexhistory = state.history.findIndex((item) => item.id === itemWithId.id)
+            //如果存在，则删除旧数据，重新存入
+            if (indexhistory !== -1) {
+                state.history.splice(indexhistory, 1)
+            }
             state.history.unshift(itemWithId)
+            //超出容量，则删除最后的数据
+            if (state.length > MAX_SIZE_LUR) {
+                state.history.pop()
+            }
             localStorage.setItem('STORE_KEY', JSON.stringify(state.history))
         },
         //删除历史消息
@@ -61,13 +72,24 @@ export const useStore = defineStore('chatHisory', {
             localStorage.setItem('STORE_KEY', JSON.stringify(state.llmhistory))
         },
         //更新回复
-        updateAiMsgInHistory: (state, messageItem) => {
+        updateAiMsgInHistory1: (state, messageItem) => {
             console.log('meici', messageItem)
             if (!state.history[0]) return;
             // 过滤与最后一段内容重复的片段
             const lastContent = state.history[0].message.slice(-messageItem.length);
             if (lastContent !== messageItem) {
                 state.history[0].message = messageItem;
+            }
+        },
+        // 假设你的store（如Pinia）中的updateAiMsgInHistory方法
+        updateAiMsgInHistory: (state, newContent, aiMsgTempId) => {
+            // 找到AI临时消息的索引
+            const aiMsgIndex = state.history.findIndex(item => item.id === aiMsgTempId);
+            if (aiMsgIndex !== -1) {
+                // 更新为解析后的HTML内容
+                state.history[aiMsgIndex].message = newContent;
+                // 同步到localStorage（如果需要）
+                localStorage.setItem('STORE_KEY', JSON.stringify(state.history));
             }
         }
     }

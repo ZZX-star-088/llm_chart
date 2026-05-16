@@ -1,19 +1,19 @@
 <template>
-    <div class="chat1">
-<div class="chart2">
-<aside-tree></aside-tree>
-</div>
-<div class="chart3">
-    <div class="page_top">
-<page-header></page-header>
-    </div>
-    <div class="page_body">
-<paga-body></paga-body>
-    </div>
-    <div class="page_foot">
-<page-foot></page-foot>
-    </div>
-</div>
+    <div class="chat-layout">
+        <div class="chat-sidebar">
+            <aside-tree></aside-tree>
+        </div>
+        <div class="chat-main">
+            <div class="chat-header">
+                <page-header></page-header>
+            </div>
+            <div class="chat-body">
+                <paga-body></paga-body>
+            </div>
+            <div class="chat-footer">
+                <page-foot></page-foot>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -25,33 +25,62 @@ import pagaBody from './pageBody.vue';
 </script>
 
 <style lang="css" scoped>
-.chat1{
+.chat-layout {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
     height: 100%;
+    background: var(--bg-page);
 }
-.chart2{
+
+.chat-sidebar {
     height: 100%;
+    flex-shrink: 0;
 }
-.chart3{
-    height: 100vh;
+
+.chat-main {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
+    height: 100vh;
+    min-width: 0;
+    background: var(--bg-card);
+    margin: 0;
+    box-shadow: -1px 0 0 var(--border-light);
 }
-.page_body{
+
+.chat-header {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-card);
+}
+
+.chat-body {
     flex: 1;
-    margin: 7px 220px 7px 220px;
-    background-color: rgba(0, 0, 0, 0.01);
-    height: 100%;
-    /* overflow-y: hidden;  */
+    min-height: 0;
+    padding: 0 180px;
 }
 
-.paga_foot{
-    position: sticky;
+.chat-footer {
+    flex-shrink: 0;
+    padding: 12px 180px 20px;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-light);
 }
 
+@media (max-width: 1200px) {
+    .chat-body {
+        padding: 0 60px;
+    }
+    .chat-footer {
+        padding: 12px 60px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .chat-body {
+        padding: 0 16px;
+    }
+    .chat-footer {
+        padding: 12px 16px 20px;
+    }
+}
 </style>
